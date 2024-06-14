@@ -1,0 +1,12 @@
+{
+  "name": "com.rustamkhonoff.mobsakai.particle.service",
+  "version": "1.0.0",
+  "displayName": "ParticleEffectForUGUI Service",
+  "description": "Service wrapper for mob-sakai/ParticleEffectForUGUI",
+  "unity": "2021.3",
+  "unityRelease": "21f1",
+  "author": {
+    "name": "Shokhrukhkhon Rustamkhonov",
+    "email": "rustamkhonoff@gmail.com"
+  }
+}
