@@ -9,16 +9,12 @@ namespace ParticleEffectForUGUIService.Zenject
     {
         public static void AddUIParticlesService(this DiContainer diContainer)
         {
-#if COFFEE_PARTICLES
             diContainer
                 .Bind<IUIParticleEffectsService>()
-                .To<global::UGUIParticleEffect.Implementation.UIParticleEffectsService>()
+                .To<UGUIParticleEffect.Implementation.UIParticleEffectsService>()
                 .AsSingle()
                 .WithArguments(Resources.Load("StaticData/UI/UIParticlesEffectsConfiguration"))
                 .NonLazy();
-#else
-            Debug.LogError("There is no implementations for UIParticleService");
-#endif
         }
     }
 }

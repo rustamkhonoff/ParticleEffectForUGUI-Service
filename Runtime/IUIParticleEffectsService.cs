@@ -1,4 +1,3 @@
-#if COFFEE_PARTICLES
 using UGUIParticleEffect.Builder;
 
 namespace UGUIParticleEffect
@@ -8,5 +7,3 @@ namespace UGUIParticleEffect
         void Attract(UIParticleAttractConfiguration configuration);
     }
 }
-
-#endif

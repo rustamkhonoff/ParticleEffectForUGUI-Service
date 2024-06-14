@@ -1,4 +1,3 @@
-#if COFFEE_PARTICLES
 using UnityEngine;
 
 namespace UGUIParticleEffect
@@ -22,4 +21,3 @@ namespace UGUIParticleEffect
         public ParticleSystem DefaultParticleSystemPrefab => _defaultParticleSystemPrefab;
     }
 }
-#endif

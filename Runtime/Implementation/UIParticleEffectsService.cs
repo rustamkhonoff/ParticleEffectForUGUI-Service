@@ -1,4 +1,3 @@
-#if COFFEE_PARTICLES
 using System.Runtime.CompilerServices;
 using UGUIParticleEffect.Builder;
 using UnityEngine;
@@ -64,4 +63,3 @@ namespace UGUIParticleEffect.Implementation
         }
     }
 }
-#endif

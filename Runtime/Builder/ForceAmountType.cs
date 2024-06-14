@@ -1,4 +1,3 @@
-#if COFFEE_PARTICLES
 namespace UGUIParticleEffect.Builder
 {
     public enum ForceAmountType
@@ -8,4 +7,3 @@ namespace UGUIParticleEffect.Builder
         Big = 2
     }
 }
-#endif

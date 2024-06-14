@@ -1,4 +1,3 @@
-#if COFFEE_PARTICLES
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -126,4 +125,3 @@ namespace UGUIParticleEffect.Builder
         }
     }
 }
-#endif

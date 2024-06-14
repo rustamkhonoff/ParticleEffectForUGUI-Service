@@ -1,4 +1,3 @@
-#if COFFEE_PARTICLES
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,6 +15,7 @@ namespace UGUIParticleEffect
 
         [SerializeField] private UIParticleAttractor _particleAttractor;
         [SerializeField] private UIParticle _uiParticle;
+
         public void Attract(UIParticleTextureData textureData, int amount, Vector3 startScreenSpacePos,
             Vector3 targetScreenSpacePos,
             ParticleSystem particlePrefab,
@@ -68,16 +68,16 @@ namespace UGUIParticleEffect
         {
             { ForceAmountType.Small, (new Vector2(0, 50), 0.007f) },
             { ForceAmountType.Medium, (new Vector2(0, 500), 0.005f) },
-            { ForceAmountType.Big, (new Vector2(0, 1000), 0.003f) },
+            { ForceAmountType.Big, (new Vector2(0, 1000), 0.003f) }
         };
 
         private void SetupParticleForce(ParticleSystem particleInstance, ForceAmountType forceAmountType)
         {
             (Vector2 minMaxSpeed, float drag) data = m_forceDict[forceAmountType];
 
-            var main = particleInstance.main;
+            ParticleSystem.MainModule main = particleInstance.main;
             main.startSpeed = new ParticleSystem.MinMaxCurve(data.minMaxSpeed.x, data.minMaxSpeed.y);
-            var velocity = particleInstance.limitVelocityOverLifetime;
+            ParticleSystem.LimitVelocityOverLifetimeModule velocity = particleInstance.limitVelocityOverLifetime;
             velocity.drag = data.drag;
         }
 
@@ -116,10 +116,7 @@ namespace UGUIParticleEffect
 
             FieldInfo field = type.GetField("m_Movement", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            if (field == null)
-            {
-                throw new Exception($"Can't access m_Movement field in {type}");
-            }
+            if (field == null) throw new Exception($"Can't access m_Movement field in {type}");
 
             field.SetValue(_particleAttractor, movement);
         }
@@ -130,10 +127,7 @@ namespace UGUIParticleEffect
 
             FieldInfo field = type.GetField("m_UpdateMode", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            if (field == null)
-            {
-                throw new Exception($"Can't access m_UpdateMode field in {type}");
-            }
+            if (field == null) throw new Exception($"Can't access m_UpdateMode field in {type}");
 
             field.SetValue(_particleAttractor, updateMode);
         }
@@ -175,10 +169,7 @@ namespace UGUIParticleEffect
 
             FieldInfo field = type.GetField("m_OnAttracted", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            if (field == null)
-            {
-                throw new Exception($"Can't access m_OnAttracted field in {type}");
-            }
+            if (field == null) throw new Exception($"Can't access m_OnAttracted field in {type}");
 
             UnityEvent unityEvent = field.GetValue(_particleAttractor) as UnityEvent;
             if (onAttractedAction == null)
@@ -217,10 +208,7 @@ namespace UGUIParticleEffect
 
             FieldInfo field = type.GetField("m_ParticleSystem", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            if (field == null)
-            {
-                throw new Exception($"Can't access m_ParticleSystem field in {type}");
-            }
+            if (field == null) throw new Exception($"Can't access m_ParticleSystem field in {type}");
 
             field.SetValue(_particleAttractor, ps);
             _particleAttractor.enabled = true;
@@ -245,5 +233,3 @@ namespace UGUIParticleEffect
         }
     }
 }
-
-#endif
