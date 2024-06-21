@@ -16,6 +16,18 @@ namespace UGUIParticleEffect
         [SerializeField] private UIParticleAttractor _particleAttractor;
         [SerializeField] private UIParticle _uiParticle;
 
+        private Dictionary<ForceAmountType, (Vector2 minMaxSpeed, float drag)> m_forceDict = new()
+        {
+            { ForceAmountType.Small, (new Vector2(0, 50), 0.007f) },
+            { ForceAmountType.Medium, (new Vector2(0, 500), 0.005f) },
+            { ForceAmountType.Big, (new Vector2(0, 1000), 0.003f) }
+        };
+
+        public void Initialize(Dictionary<ForceAmountType, (Vector2 minMaxSpeed, float drag)> forces)
+        {
+            m_forceDict = forces;
+        }
+
         public void Attract(UIParticleTextureData textureData, int amount, Vector3 startScreenSpacePos,
             Vector3 targetScreenSpacePos,
             ParticleSystem particlePrefab,
@@ -24,7 +36,7 @@ namespace UGUIParticleEffect
             ParticleAttractEmitType particleAttractEmitType = ParticleAttractEmitType.Delayed,
             UIParticleAttractor.Movement movement = UIParticleAttractor.Movement.Smooth,
             UIParticleAttractor.UpdateMode updateMode = UIParticleAttractor.UpdateMode.Normal,
-            Vector2 minMaxSize = default, float delay = -1f)
+            Vector2 minMaxSize = default, float delay = -1f, Func<Vector3> configurationAttractorFollowPosition = null)
         {
             Destroying += onDestroying;
 
@@ -51,6 +63,9 @@ namespace UGUIParticleEffect
             SetupParticleForce(particleInstance, forceAmountType);
             SetupAttractDelay(delay);
 
+            if (configurationAttractorFollowPosition is not null)
+                FollowPosition.Create(_particleAttractor.transform, configurationAttractorFollowPosition);
+
             ParticleEventHandler.Create(particleInstance).ParticleStopped += HandleParticlesStop;
 
             AnimateEmit(particleAttractEmitType, amount, particleInstance);
@@ -64,12 +79,6 @@ namespace UGUIParticleEffect
             _particleAttractor.delay = delay;
         }
 
-        private readonly Dictionary<ForceAmountType, (Vector2 minMaxSpeed, float drag)> m_forceDict = new()
-        {
-            { ForceAmountType.Small, (new Vector2(0, 50), 0.007f) },
-            { ForceAmountType.Medium, (new Vector2(0, 500), 0.005f) },
-            { ForceAmountType.Big, (new Vector2(0, 1000), 0.003f) }
-        };
 
         private void SetupParticleForce(ParticleSystem particleInstance, ForceAmountType forceAmountType)
         {

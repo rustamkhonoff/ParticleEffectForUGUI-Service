@@ -15,13 +15,15 @@ namespace UGUIParticleEffect.Implementation
 
         public UIParticleEffectsService(UIParticlesEffectsConfiguration configuration)
         {
+            SpriteExtensions.Dispose();
+
             m_configuration = configuration;
         }
 
         public void Attract(UIParticleAttractConfiguration configuration)
         {
-            UIParticleAttractorView view =
-                Object.Instantiate(m_configuration.ParticleAttractorViewPrefab, GetCanvasTransform());
+            UIParticleAttractorView view = Object.Instantiate(m_configuration.ParticleAttractorViewPrefab, GetCanvasTransform());
+            view.Initialize(m_configuration.ForceConfiguration.GetConfiguration());
             UIParticleTextureData textureData = new()
             {
                 IsTextureSheetMode = configuration.TextureSheetEnabled,
@@ -34,6 +36,9 @@ namespace UGUIParticleEffect.Implementation
             ParticleSystem prefab = configuration.CustomPrefab != null
                 ? configuration.CustomPrefab
                 : m_configuration.DefaultParticleSystemPrefab;
+
+            if (configuration.MinMaxSize == default)
+                configuration.MinMaxSize = m_configuration.MinMaxParticlesSize;
 
             view.Attract(
                 textureData,
@@ -48,7 +53,8 @@ namespace UGUIParticleEffect.Implementation
                 configuration.Movement,
                 configuration.UpdateMode,
                 configuration.MinMaxSize,
-                configuration.Delay
+                configuration.Delay,
+                configuration.AttaractorFollowPosition
             );
         }
 

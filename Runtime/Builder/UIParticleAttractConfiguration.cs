@@ -26,21 +26,20 @@ namespace UGUIParticleEffect.Builder
         public ParticleSystem CustomPrefab;
         public ForceAmountType ForceAmountType = ForceAmountType.Small;
         public float Delay = 0.3f;
-
+        public Func<Vector3> AttaractorFollowPosition;
         public UIParticleAttractConfiguration(Texture texture, int amount, Vector3 targetPosition)
         {
             Texture = texture;
             Amount = amount;
             TargetPosition = targetPosition;
         }
-
-
         public UIParticleAttractConfiguration(Sprite sprite, int amount, Vector3 targetPosition)
         {
             Texture = sprite.texture;
             Amount = amount;
             TargetPosition = targetPosition;
         }
+
 
         public UIParticleAttractConfiguration(Texture texture, Vector2Int textureSheetSize, int amount,
             Vector3 targetPosition)
@@ -60,6 +59,13 @@ namespace UGUIParticleEffect.Builder
             TextureSheetSprites = sprites.ToList();
             Amount = amount;
             TargetPosition = targetPosition;
+        }
+        
+        
+        public UIParticleAttractConfiguration WithAttractorFollowPosition(Func<Vector3> func)
+        {
+            AttaractorFollowPosition = func;
+            return this;
         }
 
         public UIParticleAttractConfiguration WithDelay(float delay)
