@@ -20,9 +20,9 @@ namespace UGUIParticleEffect.Implementation
                 return _spriteCache[sprite];
             }
 
-            if (Math.Abs(sprite.rect.width - sprite.texture.width) < 0.001f && Math.Abs(sprite.rect.height - sprite.texture.height) < 0.001f) 
+            if (Math.Abs(sprite.rect.width - sprite.texture.width) < 0.001f && Math.Abs(sprite.rect.height - sprite.texture.height) < 0.001f)
                 return sprite.texture;
-            
+
             int width = (int)sprite.rect.width;
             int height = (int)sprite.rect.height;
 
@@ -59,7 +59,6 @@ namespace UGUIParticleEffect.Implementation
             _spriteCache[sprite] = newTexture;
 
             return newTexture;
-
         }
     }
 }

@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using Coffee.UIExtensions;
 using UGUIParticleEffect.Builder;
 using UnityEngine;
@@ -16,179 +13,101 @@ namespace UGUIParticleEffect
         [SerializeField] private UIParticleAttractor _particleAttractor;
         [SerializeField] private UIParticle _uiParticle;
 
-        private Dictionary<ForceAmountType, (Vector2 minMaxSpeed, float drag)> m_forceDict = new()
-        {
-            { ForceAmountType.Small, (new Vector2(0, 50), 0.007f) },
-            { ForceAmountType.Medium, (new Vector2(0, 500), 0.005f) },
-            { ForceAmountType.Big, (new Vector2(0, 1000), 0.003f) }
-        };
+        private Camera m_camera;
 
-        public void Initialize(Dictionary<ForceAmountType, (Vector2 minMaxSpeed, float drag)> forces)
+        public void Attract(UIParticleTextureData textureData, UIParticleConfiguration configuration,
+            Action<UIParticle> configureUIParticle = null,
+            Action<ParticleSystem> configureParticle = null,
+            Action<UIParticleAttractor> configureAttractor = null)
         {
-            m_forceDict = forces;
-        }
+            Destroying += configuration.EndAction;
 
-        public void Attract(UIParticleTextureData textureData, int amount, Vector3 startScreenSpacePos,
-            Vector3 targetScreenSpacePos,
-            ParticleSystem particlePrefab,
-            ForceAmountType forceAmountType,
-            Action onAttracted = default, Action onDestroying = default,
-            ParticleAttractEmitType particleAttractEmitType = ParticleAttractEmitType.Delayed,
-            UIParticleAttractor.Movement movement = UIParticleAttractor.Movement.Smooth,
-            UIParticleAttractor.UpdateMode updateMode = UIParticleAttractor.UpdateMode.Normal,
-            Vector2 minMaxSize = default, float delay = -1f, Func<Vector3> configurationAttractorFollowPosition = null)
-        {
-            Destroying += onDestroying;
-
-            if (amount < 0)
+            if (configuration.EmittingInfo.Amount < 0)
             {
                 Destroy(gameObject);
                 Debug.Log("Trying to create attract particles with count 0, aborting");
                 return;
             }
 
-            ParticleSystem particleInstance = Instantiate(particlePrefab);
+            m_camera = Camera.main;
+            ParticleSystem particleInstance = Instantiate(configuration.Prefab);
+            Material material = CreateMaterialFor(textureData.DefaultTexture, textureData.Material);
 
-            SetupTextures(particleInstance, textureData);
-            SetupParticleMaterial(particleInstance,
-                CreateMaterialFor(textureData.DefaultTexture, textureData.Material));
-            SetupStartPosition(startScreenSpacePos);
+            SetupTextureSheetMode(particleInstance, textureData);
+            SetupParticleMaterial(particleInstance, material);
             SetupUIParticle(particleInstance);
             SetAttractorParticle(particleInstance);
-            SetupAttractorPosition(targetScreenSpacePos);
-            SetupEvents(onAttracted);
-            SetupMovement(movement);
-            SetupUpdate(updateMode);
-            SetupParticleSizes(particleInstance, minMaxSize);
-            SetupParticleForce(particleInstance, forceAmountType);
-            SetupAttractDelay(delay);
+            SetupStartPosition(configuration.StartPosition);
+            SetupAttractorPosition(configuration.TargetPosition);
+            SetupEvents(configuration.AttractAction);
 
-            if (configurationAttractorFollowPosition is not null)
-                FollowPosition.Create(_particleAttractor.transform, configurationAttractorFollowPosition);
+            configureUIParticle?.Invoke(_uiParticle);
+            configureParticle?.Invoke(particleInstance);
+            configureAttractor?.Invoke(_particleAttractor);
 
-            ParticleEventHandler.Create(particleInstance).ParticleStopped += HandleParticlesStop;
+            ParticleEventHandler.Create(particleInstance, HandleParticlesStop);
 
-            AnimateEmit(particleAttractEmitType, amount, particleInstance);
+            AnimateEmit(configuration.EmittingInfo, particleInstance);
         }
 
-        private void SetupAttractDelay(float delay)
+        private Vector3 GetPositionForInfo(PositionInfo info)
         {
-            if (delay <= 0f)
-                return;
-
-            _particleAttractor.delay = delay;
+            return info.Space switch
+            {
+                PositionInfo.SpaceType.World => m_camera!.ScreenToWorldPoint(info.PositionFunc()),
+                PositionInfo.SpaceType.UI => info.PositionFunc(),
+                _ => Vector3.zero
+            };
         }
 
-
-        private void SetupParticleForce(ParticleSystem particleInstance, ForceAmountType forceAmountType)
+        private void SetupTextureSheetMode(ParticleSystem particle, UIParticleTextureData textureData)
         {
-            (Vector2 minMaxSpeed, float drag) data = m_forceDict[forceAmountType];
-
-            ParticleSystem.MainModule main = particleInstance.main;
-            main.startSpeed = new ParticleSystem.MinMaxCurve(data.minMaxSpeed.x, data.minMaxSpeed.y);
-            ParticleSystem.LimitVelocityOverLifetimeModule velocity = particleInstance.limitVelocityOverLifetime;
-            velocity.drag = data.drag;
-        }
-
-        private void SetupParticleSizes(ParticleSystem particleInstance, Vector2 minMax)
-        {
-            if (minMax == default)
-                return;
-
-            ParticleSystem.MainModule main = particleInstance.main;
-            main.startSize = new ParticleSystem.MinMaxCurve(minMax.x, minMax.y);
-        }
-
-        private void SetupTextures(ParticleSystem particle, UIParticleTextureData textureData)
-        {
-            if (!textureData.IsTextureSheetMode)
-                return;
+            if (!textureData.IsTextureSheetMode) return;
 
             ParticleSystem.TextureSheetAnimationModule sheetAnimation = particle.textureSheetAnimation;
             sheetAnimation.enabled = true;
             sheetAnimation.mode = textureData.Mode;
             if (textureData.Mode == ParticleSystemAnimationMode.Grid)
-            {
-                sheetAnimation.numTilesX = textureData.GridTilesSize.x;
-                sheetAnimation.numTilesY = textureData.GridTilesSize.y;
-            }
+                (sheetAnimation.numTilesX, sheetAnimation.numTilesY) = (textureData.GridTilesSize.x, textureData.GridTilesSize.y);
             else
-            {
-                foreach (Sprite textureDataSprite in textureData.Sprites)
-                    sheetAnimation.AddSprite(textureDataSprite);
-            }
+                textureData.Sprites.ForEach(sheetAnimation.AddSprite);
         }
 
-        private void SetupMovement(UIParticleAttractor.Movement movement)
+        private void AnimateEmit(EmittingInfo emittingInfo, ParticleSystem particleInstance)
         {
-            Type type = _particleAttractor.GetType();
-
-            FieldInfo field = type.GetField("m_Movement", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (field == null) throw new Exception($"Can't access m_Movement field in {type}");
-
-            field.SetValue(_particleAttractor, movement);
-        }
-
-        private void SetupUpdate(UIParticleAttractor.UpdateMode updateMode)
-        {
-            Type type = _particleAttractor.GetType();
-
-            FieldInfo field = type.GetField("m_UpdateMode", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (field == null) throw new Exception($"Can't access m_UpdateMode field in {type}");
-
-            field.SetValue(_particleAttractor, updateMode);
-        }
-
-        private void AnimateEmit(ParticleAttractEmitType particleAttractEmitType, int amount,
-            ParticleSystem particleInstance)
-        {
-            IEnumerator IEDelayedEmit()
+            ParticleSystem.EmissionModule module = particleInstance.emission;
+            module.burstCount = 1;
+            bool delayed = emittingInfo.Delay > 0f;
+            if (delayed)
             {
-                WaitForSeconds waitForSeconds = new(0.01f);
-                for (int i = 0; i < amount; i++)
-                {
-                    particleInstance.Emit(1);
-                    yield return waitForSeconds;
-                }
+                ParticleSystem.MainModule main = particleInstance.main;
+                main.duration += emittingInfo.Amount * emittingInfo.Delay;
             }
-
-            void AtOnce()
-            {
-                particleInstance.Emit(amount);
-            }
-
-            switch (particleAttractEmitType)
-            {
-                case ParticleAttractEmitType.Delayed:
-                    StartCoroutine(IEDelayedEmit());
-                    break;
-                case ParticleAttractEmitType.AllInOnce:
-                    AtOnce();
-                    break;
-                default:
-                    break;
-            }
+            short emitCount = (short)(delayed ? 1 : emittingInfo.Amount);
+            short cycles = (short)(delayed ? emittingInfo.Amount : 1);
+            float interval = emittingInfo.Delay;
+            module.SetBurst(0, new ParticleSystem.Burst(0f, emitCount, _cycleCount: cycles, _repeatInterval: interval));
+            particleInstance.Play();
         }
 
         private void SetupEvents(Action onAttractedAction)
         {
-            Type type = _particleAttractor.GetType();
-
-            FieldInfo field = type.GetField("m_OnAttracted", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (field == null) throw new Exception($"Can't access m_OnAttracted field in {type}");
-
-            UnityEvent unityEvent = field.GetValue(_particleAttractor) as UnityEvent;
-            if (onAttractedAction == null)
-                return;
-            unityEvent?.AddListener(new UnityAction(onAttractedAction));
+            if (onAttractedAction == null) return;
+            _particleAttractor.onAttracted.AddListener(new UnityAction(onAttractedAction));
         }
 
-        private void SetupStartPosition(Vector3 startScreenSpacePos)
+        private void SetupStartPosition(PositionInfo info)
         {
-            transform.position = startScreenSpacePos;
+            transform.position = GetPositionForInfo(info);
+            if (info.UpdatePositionOnUpdate)
+                FollowPosition.Create(transform.transform, () => GetPositionForInfo(info));
+        }
+
+        private void SetupAttractorPosition(PositionInfo info)
+        {
+            _particleAttractor.transform.position = GetPositionForInfo(info);
+            if (info.UpdatePositionOnUpdate)
+                FollowPosition.Create(_particleAttractor.transform, () => GetPositionForInfo(info));
         }
 
         private void HandleParticlesStop()
@@ -196,10 +115,6 @@ namespace UGUIParticleEffect
             Destroy(gameObject);
         }
 
-        private void SetupAttractorPosition(Vector3 targetScreenSpacePos)
-        {
-            _particleAttractor.transform.position = targetScreenSpacePos;
-        }
 
         private void SetupUIParticle(ParticleSystem particleInstance)
         {
@@ -213,13 +128,8 @@ namespace UGUIParticleEffect
 
         private void SetAttractorParticle(ParticleSystem ps)
         {
-            Type type = _particleAttractor.GetType();
-
-            FieldInfo field = type.GetField("m_ParticleSystem", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (field == null) throw new Exception($"Can't access m_ParticleSystem field in {type}");
-
-            field.SetValue(_particleAttractor, ps);
+            _particleAttractor.enabled = false;
+            _particleAttractor.particleSystem = ps;
             _particleAttractor.enabled = true;
         }
 

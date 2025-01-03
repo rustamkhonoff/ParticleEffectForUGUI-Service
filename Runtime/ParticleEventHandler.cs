@@ -5,9 +5,11 @@ namespace UGUIParticleEffect
 {
     internal class ParticleEventHandler : MonoBehaviour
     {
-        public static ParticleEventHandler Create(ParticleSystem particleSystem)
+        public static ParticleEventHandler Create(ParticleSystem particleSystem, Action callback)
         {
-            return particleSystem.gameObject.AddComponent<ParticleEventHandler>();
+            ParticleEventHandler instance = particleSystem.gameObject.AddComponent<ParticleEventHandler>();
+            instance.ParticleStopped += callback;
+            return instance;
         }
 
         public event Action ParticleStopped;

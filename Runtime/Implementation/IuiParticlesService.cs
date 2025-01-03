@@ -1,4 +1,6 @@
+using System;
 using System.Runtime.CompilerServices;
+using Coffee.UIExtensions;
 using UGUIParticleEffect.Builder;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -7,55 +9,44 @@ using Object = UnityEngine.Object;
 
 namespace UGUIParticleEffect.Implementation
 {
-    internal class UIParticleEffectsService : IUIParticleEffectsService
+    internal class IuiParticlesService : IUIParticlesService
     {
         private readonly UIParticlesEffectsConfiguration m_configuration;
 
         private Transform m_canvasTransform;
 
-        public UIParticleEffectsService(UIParticlesEffectsConfiguration configuration)
+        public IuiParticlesService(UIParticlesEffectsConfiguration configuration)
         {
             SpriteExtensions.Dispose();
 
             m_configuration = configuration;
         }
 
-        public void Attract(UIParticleAttractConfiguration configuration)
+        public void Attract(UIParticleConfiguration configuration,
+            Action<UIParticle> configureUIParticle = null,
+            Action<ParticleSystem> configureParticle = null,
+            Action<UIParticleAttractor> configureAttractor = null)
         {
             UIParticleAttractorView view = Object.Instantiate(m_configuration.ParticleAttractorViewPrefab, GetCanvasTransform());
-            view.Initialize(m_configuration.ForceConfiguration.GetConfiguration());
             UIParticleTextureData textureData = new()
             {
                 IsTextureSheetMode = configuration.TextureSheetEnabled,
                 Mode = configuration.AnimationMode,
-                GridTilesSize = configuration.TextureSheetSize,
+                GridTilesSize = configuration.TextureSheetSize ?? new Vector2Int(),
                 DefaultTexture = configuration.Texture,
                 Sprites = configuration.TextureSheetSprites,
                 Material = m_configuration.DefaultReferenceMaterial
             };
-            ParticleSystem prefab = configuration.CustomPrefab != null
-                ? configuration.CustomPrefab
-                : m_configuration.DefaultParticleSystemPrefab;
 
-            if (configuration.MinMaxSize == default)
-                configuration.MinMaxSize = m_configuration.MinMaxParticlesSize;
+            configuration.EmittingInfo.Amount = Mathf.Clamp(configuration.EmittingInfo.Amount, 0, m_configuration.MaxAttractParticlesAmount);
+            configuration.Prefab ??= m_configuration.DefaultParticleSystemPrefab;
+            view.Attract(textureData, configuration, configureUIParticle, configureParticle, configureAttractor);
+        }
 
-            view.Attract(
-                textureData,
-                Mathf.Clamp(configuration.Amount, 0, m_configuration.MaxAttractParticlesAmount),
-                configuration.StartPosition,
-                configuration.TargetPosition,
-                prefab,
-                configuration.ForceAmountType,
-                configuration.AttractAction,
-                configuration.EndAction,
-                configuration.EmitType,
-                configuration.Movement,
-                configuration.UpdateMode,
-                configuration.MinMaxSize,
-                configuration.Delay,
-                configuration.AttaractorFollowPosition
-            );
+        public void ClearAll()
+        {
+            for (int i = 0; i < m_canvasTransform.childCount; i++)
+                Object.Destroy(m_canvasTransform.GetChild(i).gameObject);
         }
 
         private Transform GetCanvasTransform()
