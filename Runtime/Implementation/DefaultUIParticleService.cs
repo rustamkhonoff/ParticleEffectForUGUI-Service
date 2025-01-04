@@ -1,21 +1,21 @@
 using System;
 using System.Runtime.CompilerServices;
 using Coffee.UIExtensions;
-using UGUIParticleEffect.Builder;
+using UIParticle.Service.Extras;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 [assembly: InternalsVisibleTo("UIParticleEffectService.Zenject")]
 
-namespace UGUIParticleEffect.Implementation
+namespace UIParticle.Service
 {
-    internal class IuiParticlesService : IUIParticlesService
+    internal class DefaultUIParticleService : IUIParticleService
     {
         private readonly UIParticlesEffectsConfiguration m_configuration;
 
         private Transform m_canvasTransform;
 
-        public IuiParticlesService(UIParticlesEffectsConfiguration configuration)
+        public DefaultUIParticleService(UIParticlesEffectsConfiguration configuration)
         {
             SpriteExtensions.Dispose();
 
@@ -23,12 +23,12 @@ namespace UGUIParticleEffect.Implementation
         }
 
         public void Attract(UIParticleConfiguration configuration,
-            Action<UIParticle> configureUIParticle = null,
+            Action<Coffee.UIExtensions.UIParticle> configureUIParticle = null,
             Action<ParticleSystem> configureParticle = null,
             Action<UIParticleAttractor> configureAttractor = null)
         {
             UIParticleAttractorView view = Object.Instantiate(m_configuration.ParticleAttractorViewPrefab, GetCanvasTransform());
-            UIParticleTextureData textureData = new()
+            UIParticleTextureInfo textureInfo = new()
             {
                 IsTextureSheetMode = configuration.TextureSheetEnabled,
                 Mode = configuration.AnimationMode,
@@ -40,7 +40,7 @@ namespace UGUIParticleEffect.Implementation
 
             configuration.EmittingInfo.Amount = Mathf.Clamp(configuration.EmittingInfo.Amount, 0, m_configuration.MaxAttractParticlesAmount);
             configuration.Prefab ??= m_configuration.DefaultParticleSystemPrefab;
-            view.Attract(textureData, configuration, configureUIParticle, configureParticle, configureAttractor);
+            view.Attract(textureInfo, configuration, configureUIParticle, configureParticle, configureAttractor);
         }
 
         public void ClearAll()

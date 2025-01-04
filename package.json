@@ -1,12 +1,15 @@
 {
   "name": "com.rustamkhonoff.mobsakai.particle.service",
-  "version": "1.0.0",
-  "displayName": "ParticleEffectForUGUI Service",
+  "version": "1.1.1",
+  "displayName": "UI Particle Service",
   "description": "Service wrapper for mob-sakai/ParticleEffectForUGUI",
   "unity": "2021.3",
   "unityRelease": "21f1",
   "author": {
     "name": "Shokhrukhkhon Rustamkhonov",
     "email": "rustamkhonoff@gmail.com"
+  },
+  "dependencies": {
+    "com.coffee.ui-particle": "4.9.0"
   }
 }

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace UGUIParticleEffect
+namespace UIParticle.Service
 {
     [CreateAssetMenu(menuName = "Plugins/UI/Particles/Create UIParticlesEffectsConfiguration",
         fileName = "UIParticlesEffectsConfiguration", order = 0)] [Serializable]

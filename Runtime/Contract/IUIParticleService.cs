@@ -1,14 +1,13 @@
 using System;
 using Coffee.UIExtensions;
-using UGUIParticleEffect.Builder;
 using UnityEngine;
 
-namespace UGUIParticleEffect
+namespace UIParticle.Service
 {
-    public interface IUIParticlesService
+    public interface IUIParticleService
     {
         void Attract(UIParticleConfiguration configuration,
-            Action<UIParticle> configureUIParticle = null,
+            Action<Coffee.UIExtensions.UIParticle> configureUIParticle = null,
             Action<ParticleSystem> configureParticle = null,
             Action<UIParticleAttractor> configureAttractor = null);
 

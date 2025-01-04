@@ -1,22 +1,22 @@
 using System;
 using Coffee.UIExtensions;
-using UGUIParticleEffect.Builder;
+using UIParticle.Service.Extras;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace UGUIParticleEffect
+namespace UIParticle.Service
 {
     public class UIParticleAttractorView : MonoBehaviour
     {
         public event Action Destroying;
 
         [SerializeField] private UIParticleAttractor _particleAttractor;
-        [SerializeField] private UIParticle _uiParticle;
+        [SerializeField] private Coffee.UIExtensions.UIParticle _uiParticle;
 
         private Camera m_camera;
 
-        public void Attract(UIParticleTextureData textureData, UIParticleConfiguration configuration,
-            Action<UIParticle> configureUIParticle = null,
+        public void Attract(UIParticleTextureInfo textureInfo, UIParticleConfiguration configuration,
+            Action<Coffee.UIExtensions.UIParticle> configureUIParticle = null,
             Action<ParticleSystem> configureParticle = null,
             Action<UIParticleAttractor> configureAttractor = null)
         {
@@ -31,9 +31,9 @@ namespace UGUIParticleEffect
 
             m_camera = Camera.main;
             ParticleSystem particleInstance = Instantiate(configuration.Prefab);
-            Material material = CreateMaterialFor(textureData.DefaultTexture, textureData.Material);
+            Material material = CreateMaterialFor(textureInfo.DefaultTexture, textureInfo.Material);
 
-            SetupTextureSheetMode(particleInstance, textureData);
+            SetupTextureSheetMode(particleInstance, textureInfo);
             SetupParticleMaterial(particleInstance, material);
             SetupUIParticle(particleInstance);
             SetAttractorParticle(particleInstance);
@@ -60,17 +60,17 @@ namespace UGUIParticleEffect
             };
         }
 
-        private void SetupTextureSheetMode(ParticleSystem particle, UIParticleTextureData textureData)
+        private void SetupTextureSheetMode(ParticleSystem particle, UIParticleTextureInfo textureInfo)
         {
-            if (!textureData.IsTextureSheetMode) return;
+            if (!textureInfo.IsTextureSheetMode) return;
 
             ParticleSystem.TextureSheetAnimationModule sheetAnimation = particle.textureSheetAnimation;
             sheetAnimation.enabled = true;
-            sheetAnimation.mode = textureData.Mode;
-            if (textureData.Mode == ParticleSystemAnimationMode.Grid)
-                (sheetAnimation.numTilesX, sheetAnimation.numTilesY) = (textureData.GridTilesSize.x, textureData.GridTilesSize.y);
+            sheetAnimation.mode = textureInfo.Mode;
+            if (textureInfo.Mode == ParticleSystemAnimationMode.Grid)
+                (sheetAnimation.numTilesX, sheetAnimation.numTilesY) = (textureInfo.GridTilesSize.x, textureInfo.GridTilesSize.y);
             else
-                textureData.Sprites.ForEach(sheetAnimation.AddSprite);
+                textureInfo.Sprites.ForEach(sheetAnimation.AddSprite);
         }
 
         private void AnimateEmit(EmittingInfo emittingInfo, ParticleSystem particleInstance)
@@ -83,6 +83,7 @@ namespace UGUIParticleEffect
                 ParticleSystem.MainModule main = particleInstance.main;
                 main.duration += emittingInfo.Amount * emittingInfo.Delay;
             }
+
             short emitCount = (short)(delayed ? 1 : emittingInfo.Amount);
             short cycles = (short)(delayed ? emittingInfo.Amount : 1);
             float interval = emittingInfo.Delay;
@@ -129,7 +130,7 @@ namespace UGUIParticleEffect
         private void SetAttractorParticle(ParticleSystem ps)
         {
             _particleAttractor.enabled = false;
-            _particleAttractor.particleSystem = ps;
+            _particleAttractor.AddParticleSystem(ps);
             _particleAttractor.enabled = true;
         }
 

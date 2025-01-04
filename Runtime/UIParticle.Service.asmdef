@@ -1,0 +1,22 @@
+{
+    "name": "UIParticle.Service",
+    "rootNamespace": "UIParticle.Service",
+    "references": [
+        "GUID:7793e5cd8d2e94e21b56de41db6606bb"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.coffee.ui-particle",
+            "expression": "0.0.0",
+            "define": "COFFEE_PARTICLES"
+        }
+    ],
+    "noEngineReferences": false
+}

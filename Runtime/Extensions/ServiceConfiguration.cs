@@ -1,4 +1,4 @@
-namespace Extensions
+namespace UIParticle.Service.Extensions
 {
     public class ServiceConfiguration
     {

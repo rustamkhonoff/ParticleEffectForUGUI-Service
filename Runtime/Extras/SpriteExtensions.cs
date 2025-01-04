@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UGUIParticleEffect.Implementation
+namespace UIParticle.Service.Extras
 {
     public static class SpriteExtensions
     {

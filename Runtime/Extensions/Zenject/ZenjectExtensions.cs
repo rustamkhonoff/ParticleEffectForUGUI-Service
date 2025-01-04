@@ -1,7 +1,7 @@
 #if ZENJECT
 using System;
-using Extensions;
-using UGUIParticleEffect;
+using UIParticle.Service;
+using UIParticle.Service.Extensions;
 using UnityEngine;
 using Zenject;
 
@@ -14,8 +14,8 @@ namespace ParticleEffectForUGUIService.Zenject
             ServiceConfiguration serviceConfiguration = ServiceConfiguration.Default;
             configure?.Invoke(serviceConfiguration);
             diContainer
-                .Bind<IUIParticlesService>()
-                .To<UGUIParticleEffect.Implementation.IuiParticlesService>()
+                .Bind<IUIParticleService>()
+                .To<DefaultUIParticleService>()
                 .AsSingle()
                 .WithArguments(Resources.Load(serviceConfiguration.ConfigurationPath))
                 .NonLazy();

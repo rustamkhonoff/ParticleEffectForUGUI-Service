@@ -1,4 +1,4 @@
-# ParticleEffectForUGUI-Service
+# UIParticle-Service
 
 Requires
 https://github.com/mob-sakai/ParticleEffectForUGUI.git

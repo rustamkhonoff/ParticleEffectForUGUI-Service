@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace UGUIParticleEffect
+namespace UIParticle.Service.Extras
 {
     public class FollowPosition : MonoBehaviour
     {
