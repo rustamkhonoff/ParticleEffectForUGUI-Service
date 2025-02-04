@@ -1,6 +1,6 @@
 {
   "name": "com.rustamkhonoff.mobsakai.particle.service",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "displayName": "UI Particle Service",
   "description": "Service wrapper for mob-sakai/ParticleEffectForUGUI",
   "unity": "2021.3",

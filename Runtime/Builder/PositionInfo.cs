@@ -6,9 +6,9 @@ namespace UIParticle.Service
     [Serializable]
     public class PositionInfo
     {
-        public Func<Vector3> PositionFunc { get; }
-        public SpaceType Space { get; }
-        public bool UpdatePositionOnUpdate { get; }
+        public Func<Vector3> PositionFunc { get; set; }
+        public SpaceType Space { get; set; }
+        public bool UpdatePositionOnUpdate { get; set; }
 
         public enum SpaceType
         {
@@ -16,15 +16,24 @@ namespace UIParticle.Service
             UI = 1
         }
 
+        public PositionInfo() { }
+
         public PositionInfo(Vector3 vector3, SpaceType space = SpaceType.UI)
         {
             Space = space;
             PositionFunc = () => vector3;
         }
 
-        public PositionInfo(Transform transform, SpaceType space = SpaceType.UI, bool updatePositionOnUpdate = false)
+        public PositionInfo(Transform transform, SpaceType space = SpaceType.World, bool updatePositionOnUpdate = false)
         {
             PositionFunc = () => transform.position;
+            UpdatePositionOnUpdate = updatePositionOnUpdate;
+            Space = space;
+        }
+
+        public PositionInfo(RectTransform rectTransform, SpaceType space = SpaceType.UI, bool updatePositionOnUpdate = false)
+        {
+            PositionFunc = () => rectTransform.position;
             UpdatePositionOnUpdate = updatePositionOnUpdate;
             Space = space;
         }
@@ -41,6 +50,10 @@ namespace UIParticle.Service
             return $"Pos: {PositionFunc()}, Space: {Space}, Update: {UpdatePositionOnUpdate}";
         }
 
+        public static implicit operator PositionInfo(Vector3 vector3) => new(vector3);
+        public static implicit operator PositionInfo(Func<Vector3> vector3) => new(vector3);
+        public static implicit operator PositionInfo(RectTransform rectTransform) => new(rectTransform);
+        public static implicit operator PositionInfo(Transform transform) => new(transform);
         public static PositionInfo ScreenCenter => new(new Vector3(Screen.width / 2f, Screen.height / 2f, 0));
     }
 }

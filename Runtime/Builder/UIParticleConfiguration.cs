@@ -21,6 +21,7 @@ namespace UIParticle.Service
 
         public Action EndAction { get; internal set; }
         public Action AttractAction { get; internal set; }
+        public Action FirstAttractAction { get; internal set; }
 
         public class Builder
         {
@@ -93,6 +94,12 @@ namespace UIParticle.Service
             public Builder WithTargetPosition(PositionInfo targetPosition)
             {
                 m_configuration.TargetPosition = targetPosition;
+                return this;
+            }
+
+            public Builder WithFirstAttractCallback(Action action)
+            {
+                m_configuration.FirstAttractAction = action;
                 return this;
             }
 

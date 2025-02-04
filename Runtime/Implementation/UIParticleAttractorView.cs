@@ -14,6 +14,7 @@ namespace UIParticle.Service
         [SerializeField] private Coffee.UIExtensions.UIParticle _uiParticle;
 
         private Camera m_camera;
+        private int m_attractCount;
 
         public void Attract(UIParticleTextureInfo textureInfo, UIParticleConfiguration configuration,
             Action<Coffee.UIExtensions.UIParticle> configureUIParticle = null,
@@ -39,7 +40,7 @@ namespace UIParticle.Service
             SetAttractorParticle(particleInstance);
             SetupStartPosition(configuration.StartPosition);
             SetupAttractorPosition(configuration.TargetPosition);
-            SetupEvents(configuration.AttractAction);
+            SetupEvents(configuration.FirstAttractAction, configuration.AttractAction);
 
             configureUIParticle?.Invoke(_uiParticle);
             configureParticle?.Invoke(particleInstance);
@@ -54,7 +55,7 @@ namespace UIParticle.Service
         {
             return info.Space switch
             {
-                PositionInfo.SpaceType.World => m_camera!.ScreenToWorldPoint(info.PositionFunc()),
+                PositionInfo.SpaceType.World => m_camera.WorldToScreenPoint(info.PositionFunc()),
                 PositionInfo.SpaceType.UI => info.PositionFunc(),
                 _ => Vector3.zero
             };
@@ -91,11 +92,21 @@ namespace UIParticle.Service
             particleInstance.Play();
         }
 
-        private void SetupEvents(Action onAttractedAction)
+        private void SetupEvents(Action firstAttract, Action onAttractedAction)
         {
             if (onAttractedAction == null) return;
-            _particleAttractor.onAttracted.AddListener(new UnityAction(onAttractedAction));
+            _particleAttractor.onAttracted.AddListener(() => HandleAttracted(firstAttract, onAttractedAction));
         }
+
+        private void HandleAttracted(Action firstAttractAction, Action otherAction)
+        {
+            if (m_attractCount == 0)
+                firstAttractAction?.Invoke();
+
+            m_attractCount++;
+            otherAction?.Invoke();
+        }
+
 
         private void SetupStartPosition(PositionInfo info)
         {
