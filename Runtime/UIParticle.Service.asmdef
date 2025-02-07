@@ -11,12 +11,5 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "com.coffee.ui-particle",
-            "expression": "0.0.0",
-            "define": "COFFEE_PARTICLES"
-        }
-    ],
     "noEngineReferences": false
 }

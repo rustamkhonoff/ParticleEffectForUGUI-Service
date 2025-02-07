@@ -2,11 +2,11 @@
   "name": "com.rustamkhonoff.mobsakai.particle.service",
   "version": "1.1.2",
   "displayName": "UI Particle Service",
-  "description": "Service wrapper for mob-sakai/ParticleEffectForUGUI",
+  "description": "Provides a service wrapper for easier usage based on mob-sakai/ParticleEffectForUGUI",
   "unity": "2021.3",
   "unityRelease": "21f1",
   "author": {
-    "name": "Shokhrukhkhon Rustamkhonov",
+    "name": "rustamkhonoff",
     "email": "rustamkhonoff@gmail.com"
   },
   "dependencies": {

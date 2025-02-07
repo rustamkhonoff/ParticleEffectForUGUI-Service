@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace UIParticle.Service
 {
-    internal class DefaultUIParticleService : IUIParticleService
+    internal class DefaultUIParticleService : IUIParticleService, IDisposable
     {
         private readonly UIParticlesEffectsConfiguration m_configuration;
 
@@ -18,6 +18,7 @@ namespace UIParticle.Service
         public DefaultUIParticleService(UIParticlesEffectsConfiguration configuration)
         {
             SpriteExtensions.Dispose();
+            UIParticlesGlobal.Initialize(this);
 
             m_configuration = configuration;
         }
@@ -57,6 +58,12 @@ namespace UIParticle.Service
             m_canvasTransform.name = "UIParticleEffectsService Transform";
             Object.DontDestroyOnLoad(m_canvasTransform.gameObject);
             return m_canvasTransform;
+        }
+
+        public void Dispose()
+        {
+            UIParticlesGlobal.Dispose();
+            SpriteExtensions.Dispose();
         }
     }
 }

@@ -24,21 +24,21 @@ namespace UIParticle.Service
             PositionFunc = () => vector3;
         }
 
-        public PositionInfo(Transform transform, SpaceType space = SpaceType.World, bool updatePositionOnUpdate = false)
+        public PositionInfo(Transform transform, SpaceType space = SpaceType.World, bool updatePositionOnUpdate = true)
         {
             PositionFunc = () => transform.position;
             UpdatePositionOnUpdate = updatePositionOnUpdate;
             Space = space;
         }
 
-        public PositionInfo(RectTransform rectTransform, SpaceType space = SpaceType.UI, bool updatePositionOnUpdate = false)
+        public PositionInfo(RectTransform rectTransform, SpaceType space = SpaceType.UI, bool updatePositionOnUpdate = true)
         {
             PositionFunc = () => rectTransform.position;
             UpdatePositionOnUpdate = updatePositionOnUpdate;
             Space = space;
         }
 
-        public PositionInfo(Func<Vector3> positionFunc, SpaceType space = SpaceType.UI, bool updatePositionOnUpdate = false)
+        public PositionInfo(Func<Vector3> positionFunc, SpaceType space = SpaceType.UI, bool updatePositionOnUpdate = true)
         {
             PositionFunc = positionFunc;
             UpdatePositionOnUpdate = updatePositionOnUpdate;
