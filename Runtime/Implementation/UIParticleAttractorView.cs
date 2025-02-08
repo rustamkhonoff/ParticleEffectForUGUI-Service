@@ -94,7 +94,6 @@ namespace UIParticle.Service
 
         private void SetupEvents(Action firstAttract, Action onAttractedAction)
         {
-            if (onAttractedAction == null) return;
             _particleAttractor.onAttracted.AddListener(() => HandleAttracted(firstAttract, onAttractedAction));
         }
 

@@ -199,7 +199,7 @@ namespace UIParticle.Service
             /// <summary>
             /// Assigns a callback for each time a particle is attracted.
             /// </summary>
-            public Builder WithAttractAction(Action attractAction)
+            public Builder WithAttractCallback(Action attractAction)
             {
                 m_configuration.AttractAction = attractAction;
                 return this;

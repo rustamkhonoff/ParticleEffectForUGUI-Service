@@ -1,6 +1,58 @@
 # UIParticle-Service
 
-Provides a service wrapper for easier usage based on [ParticleEffectForUGUI](https://github.com/mob-sakai/ParticleEffectForUGUI.git).
+Provides a service wrapper for easier usage based
+on [ParticleEffectForUGUI](https://github.com/mob-sakai/ParticleEffectForUGUI.git).
+
+## Installation & Setup
+
+### 1. Install via Git Package
+
+To install the latest version of **UAudio**, use the following Git URL in Unity's **Package Manager**:
+`https://github.com/rustamkhonoff/ParticleEffectForUGUI-Service.git`
+
+### 2. Install a Specific Version
+
+UIParticle-Service also supports version tags. To install a specific version, append the tag to the URL:
+`hhttps://github.com/rustamkhonoff/ParticleEffectForUGUI-Service.git#1.0.0`
+Replace `1.0.0` with the desired version number.
+
+### 3. Create UIParticlesEffectsConfiguration.asset anywhere in Resources folder:
+
+`Services/UI Particles/Create UIParticlesEffectsConfiguration`
+
+### 4. Fill in all fields in the configuration `UIParticlesEffectsConfiguration.asset` file
+
+> You can use default materials and canvas, they are located inside Resources folder in Package location
+
+### 5. Manual service creation and usage
+
+````csharp
+    private UIParticlesEffectsConfiguration _particleConfiguration;
+    ...
+    UIParticleService = new DefaultUIParticleService(_particleConfiguration);    
+````
+
+````csharp
+    UIParticleService.Attract(...);
+    //or
+    UIParticlesGlobal.Instance.Attract(...);
+````
+
+### 5.1 Setup service using Zenject
+
+Add ZENJECT in ScriptingDefineSymbols in Player/Other Settings
+![img.png](Documentation%2Fimg.png)
+And in ProjectContext
+
+````csharp
+    //If UIParticlesEffectsConfiguration asset located in root Resources folder
+    Container.AddUIParticlesService();
+    //or 
+    ontainer.AddUIParticlesService(a=> a.ConfigurationPath = "YOUR PATH");
+````
+
+> [NOTE] All particles are created inside a single Canvas Root. Make sure the Root Canvas prefab's order layer is higher
+> than your default canvases order layer.
 
 # Dependecies
 
@@ -9,7 +61,6 @@ Provides a service wrapper for easier usage based on [ParticleEffectForUGUI](htt
     "com.coffee.ui-particle": "4.9.0" (https://github.com/mob-sakai/ParticleEffectForUGUI.git)
   }
 ```
-
 
 # Service API Reference
 
@@ -63,10 +114,11 @@ Provides a service wrapper for easier usage based on [ParticleEffectForUGUI](htt
 ```
 
 ## Position Info
+
 **Spacetype means where the target position is, in the _UI_ or in the _World_**
 
->Use SpaceType.UI when the particle spawn/target position is in the UI, inside (the canvas)
->Use SpaceType.World when the particle spawn/target position is in the World space 
+> Use SpaceType.UI when the particle spawn/target position is in the UI, inside (the canvas)
+> Use SpaceType.World when the particle spawn/target position is in the World space
 
 ```csharp
     public PositionInfo(Vector3 vector3, SpaceType space = SpaceType.UI)
@@ -76,8 +128,3 @@ Provides a service wrapper for easier usage based on [ParticleEffectForUGUI](htt
     //and
     public static PositionInfo ScreenCenter => new(new Vector3(Screen.width / 2f, Screen.height / 2f, 0));
 ```
-
-Requires
-https://github.com/mob-sakai/ParticleEffectForUGUI.git
-
-Has Zenject suppport => Add ZENJECT in ScriptingDefineSymbols in Player/Other Settings => Container.AddUIParticlesService()

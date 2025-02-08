@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1717b2e9b9ad4026bd9721a02705024e, type: 3}
+  m_Name: UIParticlesEffectsConfiguration
+  m_EditorClassIdentifier: 
+  <ParticleAttractorViewPrefab>k__BackingField: {fileID: 5375524686844828671, guid: 4745a5ca0f4bb47cb9be4a80eaa7b4b9, type: 3}
+  <CanvasPrefab>k__BackingField: {fileID: 6545753694726249098, guid: 8844d53339e644433849505caa8ea527, type: 3}
+  <MaxAttractParticlesAmount>k__BackingField: 20
+  <DefaultParticleSystemPrefab>k__BackingField: {fileID: 7751871984033821948, guid: 2e098bd1173f54e4196823af5cbc2ede, type: 3}
+  <DefaultReferenceMaterial>k__BackingField: {fileID: 2100000, guid: 299801784660945e4b0597967079deff, type: 2}

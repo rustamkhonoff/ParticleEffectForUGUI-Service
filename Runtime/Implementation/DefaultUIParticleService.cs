@@ -5,11 +5,10 @@ using UIParticle.Service.Extras;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-[assembly: InternalsVisibleTo("UIParticleEffectService.Zenject")]
 
 namespace UIParticle.Service
 {
-    internal class DefaultUIParticleService : IUIParticleService, IDisposable
+    public class DefaultUIParticleService : IUIParticleService, IDisposable
     {
         private readonly UIParticlesEffectsConfiguration m_configuration;
 

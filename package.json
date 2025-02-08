@@ -11,5 +11,12 @@
   },
   "dependencies": {
     "com.coffee.ui-particle": "4.9.0"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "UI Particles Service Demo",
+      "description": "Contains basic service usage",
+      "path": "Samples~/Demo Scene"
+    }
+  ]
 }

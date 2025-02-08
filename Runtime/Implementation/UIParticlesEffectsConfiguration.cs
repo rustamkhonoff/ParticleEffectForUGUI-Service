@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UIParticle.Service
 {
-    [CreateAssetMenu(menuName = "Plugins/UI/Particles/Create UIParticlesEffectsConfiguration",
+    [CreateAssetMenu(menuName = "Services/UI Particles/Create UIParticlesEffectsConfiguration",
         fileName = "UIParticlesEffectsConfiguration", order = 0)] [Serializable]
-    internal class UIParticlesEffectsConfiguration : ScriptableObject
+    public class UIParticlesEffectsConfiguration : ScriptableObject
     {
         [field: SerializeField] public UIParticleAttractorView ParticleAttractorViewPrefab { get; private set; }
         [field: SerializeField] public Canvas CanvasPrefab { get; private set; }

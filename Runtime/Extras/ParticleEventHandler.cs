@@ -14,6 +14,7 @@ namespace UIParticle.Service.Extras
 
         public event Action ParticleStopped;
 
+        
         private void OnParticleSystemStopped()
         {
             ParticleStopped?.Invoke();
