@@ -45,6 +45,8 @@ namespace UIParticle.Service
 
         public void ClearAll()
         {
+            if (m_canvasTransform == null) return;
+
             for (int i = 0; i < m_canvasTransform.childCount; i++)
                 Object.Destroy(m_canvasTransform.GetChild(i).gameObject);
         }
